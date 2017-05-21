@@ -11,7 +11,7 @@ class holder(object):
 
 def _common_fields(entity, message, only=None, exclude=None):
     message_fields = [x.name for x in message.all_fields()]
-    entity_properties = [k for k, v in entity._properties.iteritems()]
+    entity_properties = [k for k, v in entity._properties.items()]
 
     if (inspect.isclass(entity) and not issubclass(entity, ndb.Expando)) and not isinstance(entity, ndb.Expando):
         fields = set(message_fields) & set(entity_properties)
@@ -30,7 +30,7 @@ def _common_fields(entity, message, only=None, exclude=None):
 def to_message(entity, message, converters=None, only=None, exclude=None, key_field='id'):
     message_fields, entity_properties, fields = _common_fields(entity, message, only, exclude)
 
-    converters = dict(default_converters.items() + converters.items()) if converters else default_converters
+    converters = dict(list(default_converters.items()) + list(converters.items())) if converters else default_converters
 
     # Key first
     values = {}
@@ -61,7 +61,7 @@ def to_message(entity, message, converters=None, only=None, exclude=None, key_fi
     if inspect.isclass(message):
         return message(**values)
     else:
-        for name, value in values.iteritems():
+        for name, value in values.items():
             setattr(message, name, value)
         return message
 
@@ -69,7 +69,7 @@ def to_message(entity, message, converters=None, only=None, exclude=None, key_fi
 def to_entity(message, model, converters=None, only=None, exclude=None, key_field='id'):
     message_fields, entity_properties, fields = _common_fields(model, message, only, exclude)
 
-    converters = dict(default_converters.items() + converters.items()) if converters else default_converters
+    converters = dict(list(default_converters.items()) + list(converters.items())) if converters else default_converters
 
     values = {}
 
@@ -112,7 +112,7 @@ def model_message(Model, only=None, exclude=None, converters=None, key_field='id
     class_name = Model.__name__ + 'Message'
 
     props = Model._properties
-    sorted_props = sorted(props.iteritems(), key=lambda prop: prop[1]._creation_counter)
+    sorted_props = sorted(iter(props.items()), key=lambda prop: prop[1]._creation_counter)
     field_names = [x[0] for x in sorted_props if x[0]]
 
     if exclude:
@@ -121,7 +121,7 @@ def model_message(Model, only=None, exclude=None, converters=None, key_field='id
     if only:
         field_names = [x for x in field_names if x in only]
 
-    converters = dict(default_converters.items() + converters.items()) if converters else default_converters
+    converters = dict(list(default_converters.items()) + list(converters.items())) if converters else default_converters
 
     # Add in the key field.
     key_holder = holder()
@@ -163,7 +163,7 @@ def compose(*args):
         for field in message_cls.all_fields():
             fields[field.name] = field
 
-    for n, orig_field in enumerate(fields.values(), 1):
+    for n, orig_field in enumerate(list(fields.values()), 1):
         field = copy.copy(orig_field)
         # This is so ridiculously hacky. I'm not proud of it, but the alternative to doing this is trying to reconstruct each
         # field by figuring out the arguments originally passed into __init__. I think this is honestly a little cleaner.

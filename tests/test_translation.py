@@ -40,7 +40,7 @@ class TestTranslation(AppEngineTest):
     def test_model_message(self):
         WidgetMessage = protopigeon.model_message(MessageModelTest)
 
-        properties = MessageModelTest._properties.keys()
+        properties = list(MessageModelTest._properties.keys())
         fields = dir(WidgetMessage)
 
         for prop in properties:
@@ -158,10 +158,10 @@ class TestTranslation(AppEngineTest):
 
         # Full serialization/deserialization comparion test.
         message = protopigeon.to_message(widget, WidgetMessage)
-        print message
+        print(message)
         deserialized = protopigeon.to_entity(message, MessageModelTest)
 
-        for prop in MessageModelTest._properties.keys():
+        for prop in list(MessageModelTest._properties.keys()):
             assert getattr(deserialized, prop) == getattr(widget, prop)
 
         assert deserialized.key.urlsafe() == widget.key.urlsafe()
@@ -172,7 +172,7 @@ class TestTranslation(AppEngineTest):
         empty_widget = MessageModelTest()
         message = protopigeon.to_message(empty_widget, WidgetMessage)
 
-        for prop in MessageModelTest._properties.keys():
+        for prop in list(MessageModelTest._properties.keys()):
             assert not getattr(message, prop)
 
         empty_message = WidgetMessage()

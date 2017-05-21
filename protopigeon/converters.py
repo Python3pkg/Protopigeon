@@ -110,7 +110,7 @@ class UserConverter(Converter):
 
     @staticmethod
     def to_model(Message, property, field, value):
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             return users.User(email=value)
         elif isinstance(value, UserMessage) and value.email:
             return users.User(email=value.email)
@@ -142,7 +142,7 @@ class KeyConverter(Converter):
 
     @staticmethod
     def to_model(Message, property, field, value):
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             return ndb.Key(urlsafe=value)
 
     @staticmethod
